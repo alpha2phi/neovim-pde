@@ -44,3 +44,5 @@ vim.o.completeopt = "menuone,noselect"
 
 -- Make sure your terminal supports this
 vim.o.termguicolors = true
+
+vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
