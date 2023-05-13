@@ -22,7 +22,7 @@ return {
       setup = {},
     },
     config = function(plugin, opts)
-      require("plugins.lsp.servers").setup(plugin, opts)
+      require("base.lsp.servers").setup(plugin, opts)
     end,
   },
   {
@@ -31,7 +31,6 @@ return {
     cmd = "Mason",
     opts = {
       ensure_installed = {
-        "stylua",
         "shfmt",
       },
     },
@@ -62,7 +61,6 @@ return {
       return {
         root_dir = require("null-ls.utils").root_pattern(".null-ls-root", ".neoconf.json", "Makefile", ".git"),
         sources = {
-          nls.builtins.formatting.stylua,
           nls.builtins.formatting.shfmt,
         },
       }

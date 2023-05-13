@@ -17,14 +17,14 @@ function M.on_attach(client, buffer)
   self:map("[w", M.diagnostic_goto(false, "WARNING"), { desc = "Prev Warning" })
   self:map("<leader>la", vim.lsp.buf.code_action, { desc = "Code Action", mode = { "n", "v" }, has = "codeAction" })
 
-  local format = require("plugins.lsp.format").format
+  local format = require("base.lsp.format").format
   self:map("<leader>lf", format, { desc = "Format Document", has = "documentFormatting" })
   self:map("<leader>lf", format, { desc = "Format Range", mode = "v", has = "documentRangeFormatting" })
   self:map("<leader>lr", vim.lsp.buf.rename, { expr = true, desc = "Rename", has = "rename" })
 
   self:map("<leader>ls", require("telescope.builtin").lsp_document_symbols, { desc = "Document Symbols" })
   self:map("<leader>lS", require("telescope.builtin").lsp_dynamic_workspace_symbols, { desc = "Workspace Symbols" })
-  self:map("<leader>lw", require("plugins.lsp.utils").toggle_diagnostics, { desc = "Toggle Inline Diagnostics" })
+  self:map("<leader>lw", require("base.lsp.utils").toggle_diagnostics, { desc = "Toggle Inline Diagnostics" })
 end
 
 function M.new(client, buffer)

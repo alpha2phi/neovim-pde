@@ -1,5 +1,5 @@
 local function augroup(name)
-  return vim.api.nvim_create_augroup("mnv_" .. name, { clear = true })
+  return vim.api.nvim_create_augroup("nde_" .. name, { clear = true })
 end
 
 -- See `:help vim.highlight.on_yank()`
