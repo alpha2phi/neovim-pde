@@ -12,7 +12,26 @@ return {
       { "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "Buffers" },
       { "<leader>fh", "<cmd>Telescope help_tags<cr>", desc = "Help" },
     },
-    opts = {},
+    opts = {
+      defaults = {
+        mappings = {
+          i = {
+            ["<C-j>"] = function(...)
+              require("telescope.actions").move_selection_next(...)
+            end,
+            ["<C-k>"] = function(...)
+              require("telescope.actions").move_selection_previous(...)
+            end,
+            ["<C-n>"] = function(...)
+              require("telescope.actions").cycle_history_next(...)
+            end,
+            ["<C-p>"] = function(...)
+              require("telescope.actions").cycle_history_prev(...)
+            end,
+          },
+        },
+      },
+    },
     config = function(_, opts)
       local telescope = require "telescope"
       telescope.setup(opts)
@@ -26,11 +45,9 @@ return {
       plugins = { spelling = true },
       defaults = {
         mode = { "n", "v" },
-        ["<leader>d"] = { name = "+DAP" },
         ["<leader>f"] = { name = "+File" },
-        ["<leader>g"] = { name = "+Git" },
-        ["<leader>l"] = { name = "+LSP" },
         ["<leader>q"] = { name = "+Quit/Session" },
+        ["<leader>qq"] = { cmd = "<cmd>q<cr>", desc = "Quit" },
       },
     },
     config = function(_, opts)

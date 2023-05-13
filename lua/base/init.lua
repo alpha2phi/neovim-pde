@@ -24,4 +24,13 @@ return {
       { "<leader>qd", function() require("persistence").stop() end, desc = "Don't Save Current Session" },
     },
   },
+  {
+    "folke/which-key.nvim",
+    event = "VeryLazy",
+    opts = {
+      defaults = {
+        ["<leader>g"] = { name = "+Git" },
+      },
+    },
+  },
 }
