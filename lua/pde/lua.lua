@@ -58,10 +58,12 @@ return {
   -- Debugging
   {
     "mfussenegger/nvim-dap",
+    dependencies = {
+      { "jbyuki/one-small-step-for-vimkind" },
+    },
     opts = {
       setup = {
         osv = function(_, _)
-          print "setting up osv"
           local dap = require "dap"
           dap.configurations.lua = {
             {
