@@ -1,3 +1,7 @@
+if not require("config").pde.go then
+  return {}
+end
+
 return {
   {
     "nvim-treesitter/nvim-treesitter",

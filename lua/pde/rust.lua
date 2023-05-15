@@ -76,7 +76,7 @@ return {
     opts = {
       setup = {
         codelldb = function()
-          local codelldb_path, liblldb_path = get_codelldb()
+          local codelldb_path, _ = get_codelldb()
           local dap = require "dap"
           dap.adapters.codelldb = {
             type = "server",
