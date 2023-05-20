@@ -14,7 +14,7 @@ return {
     opts = function(_, opts)
       vim.list_extend(
         opts.ensure_installed,
-        { "delve", "gopls", "gotests", "golangci-lint", "gofumpt", "goimports", "golangci-lint-langserver", "impl", "gomodifytags", "iferr", "gotestsum" }
+        { "delve", "gotests", "golangci-lint", "gofumpt", "goimports", "golangci-lint-langserver", "impl", "gomodifytags", "iferr", "gotestsum" }
       )
     end,
   },
