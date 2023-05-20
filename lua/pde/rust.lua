@@ -1,3 +1,7 @@
+if not require("config").pde.rust then
+  return {}
+end
+
 local function get_codelldb()
   local mason_registry = require "mason-registry"
   local codelldb = mason_registry.get_package "codelldb"

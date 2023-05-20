@@ -3,7 +3,7 @@ return {
     lua = true,
     python = true,
     cpp = true,
-    go = true,
+    go = false,
     rust = true,
   },
 }
