@@ -72,7 +72,8 @@ return {
             -- stylua: ignore
             if client.name == "gopls" then
               map("n", "<leader>ly", "<cmd>GoModTidy<cr>", "Go Mod Tidy")
-              map("n", "<leader>lt", "<cmd>GoCoverage<Cr>", "Go Test Coverage")
+              map("n", "<leader>lc", "<cmd>GoCoverage<Cr>", "Go Test Coverage")
+              map("n", "<leader>lt", "<cmd>GoTest<Cr>", "Go Test")
               map("n", "<leader>lR", "<cmd>GoRun<Cr>", "Go Run")
               map("n", "<leader>dT", "<cmd>lua require('dap-go').debug_test()<cr>", "Go Debug Test")
             end
