@@ -1,9 +1,10 @@
 return {
   pde = {
-    lua = true,
-    python = true,
     cpp = true,
     go = false,
+    java = true,
+    lua = true,
+    python = true,
     rust = true,
   },
 }
