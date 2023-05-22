@@ -20,6 +20,7 @@ function M.format()
       end
       return client.name ~= "null-ls"
     end,
+    timeout_ms = 3000,
   }
 end
 
