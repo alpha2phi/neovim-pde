@@ -65,9 +65,8 @@ return {
       vim.api.nvim_create_autocmd("FileType", {
         pattern = { "java" },
         callback = function()
-          local jdtls = require "jdtls"
-
           -- LSP capabilities
+          local jdtls = require "jdtls"
           local capabilities = require("base.lsp.utils").capabilities()
           local extendedClientCapabilities = jdtls.extendedClientCapabilities
           extendedClientCapabilities.resolveAdditionalTextEditsSupport = true
@@ -76,9 +75,9 @@ return {
           local workspace_dir = get_workspace()
           local bundles = get_bundles()
 
-          local on_attach = function(client, bufnr)
+          local on_attach = function(_, bufnr)
             vim.lsp.codelens.refresh()
-            require("jdtls").setup_dap { hotcodereplace = "auto" }
+            jdtls.setup_dap { hotcodereplace = "auto" }
             require("jdtls.dap").setup_dap_main_class_configs()
             require("jdtls.setup").add_commands()
 
@@ -88,52 +87,28 @@ return {
               end
               vim.keymap.set(mode, lhs, rhs, { silent = true, desc = desc, buffer = bufnr, noremap = true })
             end
-            -- local mappings = {
-            --   C = {
-            --     name = "Java",
-            --     o = { "<Cmd>lua require'jdtls'.organize_imports()<CR>", "Organize Imports" },
-            --     v = { "<Cmd>lua require('jdtls').extract_variable()<CR>", "Extract Variable" },
-            --     c = { "<Cmd>lua require('jdtls').extract_constant()<CR>", "Extract Constant" },
-            --     t = { "<Cmd>lua require'jdtls'.test_nearest_method()<CR>", "Test Method" },
-            --     T = { "<Cmd>lua require'jdtls'.test_class()<CR>", "Test Class" },
-            --     u = { "<Cmd>JdtUpdateConfig<CR>", "Update Config" },
-            --   },
-            -- }
 
-            -- local vmappings = {
-            --   C = {
-            --     name = "Java",
-            --     v = { "<Esc><Cmd>lua require('jdtls').extract_variable(true)<CR>", "Extract Variable" },
-            --     c = { "<Esc><Cmd>lua require('jdtls').extract_constant(true)<CR>", "Extract Constant" },
-            --     m = { "<Esc><Cmd>lua require('jdtls').extract_method(true)<CR>", "Extract Method" },
-            --   },
-            -- }
+            -- Register keymappings
+            local wk = require "which-key"
+            local keys = { mode = { "n", "v" }, ["<leader>lj"] = { name = "+Java" } }
+            wk.register(keys)
 
-            -- vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-            --   pattern = { "*.java" },
-            --   callback = function()
-            --     local _, _ = pcall(vim.lsp.codelens.refresh)
-            --   end,
-            -- })
+            map("n", "<leader>ljo", jdtls.organize_imports, "Organize Imports")
+            map("n", "<leader>ljv", jdtls.extract_variable, "Extract Variable")
+            map("n", "<leader>ljc", jdtls.extract_constant, "Extract Constant")
+            map("n", "<leader>ljt", jdtls.test_nearest_method, "Test Nearest Method")
+            map("n", "<leader>ljT", jdtls.test_class, "Test Class")
+            map("n", "<leader>lju", "<cmd>JdtUpdateConfig<cr>", "Update Config")
+            map("v", "<leader>ljv", "<esc><cmd>lua require('jdtls').extract_variable(true)<cr>", "Extract Variable")
+            map("v", "<leader>ljc", "<esc><cmd>lua require('jdtls').extract_constant(true)<cr>", "Extract Constant")
+            map("v", "<leader>ljm", "<esc><Cmd>lua require('jdtls').extract_method(true)<cr>", "Extract Method")
 
             vim.api.nvim_create_autocmd("BufWritePost", {
               pattern = { "*.java" },
-              buffer = bufnr,
               callback = function()
-                client.request_sync("java/buildWorkspace", false, 5000, bufnr)
+                local _, _ = pcall(vim.lsp.codelens.refresh)
               end,
             })
-
-            -- vim.keymap.set('n', "<A-o>", jdtls.organize_imports, opts)
-            -- vim.keymap.set('n', "<leader>df", jdtls.test_class, opts)
-            -- vim.keymap.set('n', "<leader>dn", jdtls.test_nearest_method, opts)
-            -- vim.keymap.set('n', "crv", jdtls.extract_variable, opts)
-            -- vim.keymap.set('v', 'crm', [[<ESC><CMD>lua require('jdtls').extract_method(true)<CR>]], opts)
-            -- vim.keymap.set('n', "crc", jdtls.extract_constant, opts)
-            -- local create_command = vim.api.nvim_buf_create_user_command
-            -- create_command(bufnr, 'W', require('me.lsp.ext').remove_unused_imports, {
-            --   nargs = 0,
-            -- })
           end
 
           local config = {
@@ -169,29 +144,6 @@ return {
                 contentProvider = { preferred = "fernflower" },
                 saveActions = {
                   organizeImports = true,
-                },
-                completion = {
-                  favoriteStaticMembers = {
-                    "io.crate.testing.Asserts.assertThat",
-                    "org.assertj.core.api.Assertions.assertThat",
-                    "org.assertj.core.api.Assertions.assertThatThrownBy",
-                    "org.assertj.core.api.Assertions.assertThatExceptionOfType",
-                    "org.assertj.core.api.Assertions.catchThrowable",
-                    "org.hamcrest.MatcherAssert.assertThat",
-                    "org.hamcrest.Matchers.*",
-                    "org.hamcrest.CoreMatchers.*",
-                    "org.junit.jupiter.api.Assertions.*",
-                    "java.util.Objects.requireNonNull",
-                    "java.util.Objects.requireNonNullElse",
-                    "org.mockito.Mockito.*",
-                  },
-                  filteredTypes = {
-                    "com.sun.*",
-                    "io.micrometer.shaded.*",
-                    "java.awt.*",
-                    "jdk.*",
-                    "sun.*",
-                  },
                 },
                 sources = {
                   organizeImports = {
