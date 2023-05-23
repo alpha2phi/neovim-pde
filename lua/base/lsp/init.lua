@@ -15,7 +15,6 @@ return {
       { "j-hui/fidget.nvim", config = true },
       "williamboman/mason.nvim",
       "williamboman/mason-lspconfig.nvim",
-      -- "jay-babu/mason-null-ls.nvim",
     },
     opts = {
       servers = {},
