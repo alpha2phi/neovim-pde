@@ -20,6 +20,9 @@ return {
     opts = {
       servers = {},
       setup = {},
+      format = {
+        timeout_ms = 3000,
+      },
     },
     config = function(plugin, opts)
       require("base.lsp.servers").setup(plugin, opts)
