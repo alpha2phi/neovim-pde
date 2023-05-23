@@ -33,7 +33,6 @@ vim.api.nvim_create_autocmd("FileType", {
     "floggraph",
     "fugitive",
     "git",
-    "gitcommit",
     "help",
     "lspinfo",
     "man",
