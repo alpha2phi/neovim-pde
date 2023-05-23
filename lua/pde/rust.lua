@@ -13,15 +13,6 @@ end
 
 return {
   {
-    "folke/which-key.nvim",
-    event = "VeryLazy",
-    opts = {
-      defaults = {
-        ["<leader>lc"] = { name = "+Crates" },
-      },
-    },
-  },
-  {
     "nvim-treesitter/nvim-treesitter",
     opts = function(_, opts)
       vim.list_extend(opts.ensure_installed, { "rust" })
@@ -74,6 +65,11 @@ return {
             pattern = { "Cargo.toml" },
             callback = function(event)
               local bufnr = event.buf
+
+              -- Register keymappings
+              local wk = require "which-key"
+              local keys = { mode = { "n", "v" }, ["<leader>lc"] = { name = "+Crates" } }
+              wk.register(keys)
 
               local map = function(mode, lhs, rhs, desc)
                 if desc then
