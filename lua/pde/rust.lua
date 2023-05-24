@@ -160,4 +160,15 @@ return {
       },
     },
   },
+  {
+    "nvim-neotest/neotest",
+    dependencies = {
+      "rouge8/neotest-rust",
+    },
+    opts = function(_, opts)
+      vim.list_extend(opts.adapters, {
+        require "neotest-rust",
+      })
+    end,
+  },
 }

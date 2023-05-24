@@ -1,7 +1,7 @@
 return {
   pde = {
     cpp = true,
-    go = false,
+    go = true,
     java = true,
     lua = true,
     python = true,
