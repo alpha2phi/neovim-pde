@@ -69,4 +69,15 @@ return {
       },
     },
   },
+  {
+    "nvim-neotest/neotest",
+    dependencies = {
+      { "alfaix/neotest-gtest", opts = {} },
+    },
+    opts = function(_, opts)
+      vim.list_extend(opts.adapters, {
+        require "neotest-gtest",
+      })
+    end,
+  },
 }

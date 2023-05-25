@@ -28,6 +28,11 @@ return {
   },
   { "catppuccin/nvim", lazy = false, name = "catppuccin" },
   {
+    "stevearc/dressing.nvim",
+    event = "VeryLazy",
+    opts = {},
+  },
+  {
     "folke/noice.nvim",
     dependencies = {
       "MunifTanjim/nui.nvim",

@@ -15,11 +15,13 @@ return {
       { "j-hui/fidget.nvim", config = true },
       "williamboman/mason.nvim",
       "williamboman/mason-lspconfig.nvim",
-      -- "jay-babu/mason-null-ls.nvim",
     },
     opts = {
       servers = {},
       setup = {},
+      format = {
+        timeout_ms = 3000,
+      },
     },
     config = function(plugin, opts)
       require("base.lsp.servers").setup(plugin, opts)

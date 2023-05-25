@@ -33,10 +33,10 @@ return {
           settings = {
             ["rust-analyzer"] = {
               cargo = { allFeatures = true },
-              checkOnSave = {
-                command = "cargo clippy",
-                extraArgs = { "--no-deps" },
-              },
+              -- checkOnSave = {
+              --   command = "cargo clippy",
+              --   extraArgs = { "--no-deps" },
+              -- },
             },
           },
         },
@@ -159,5 +159,16 @@ return {
         end,
       },
     },
+  },
+  {
+    "nvim-neotest/neotest",
+    dependencies = {
+      "rouge8/neotest-rust",
+    },
+    opts = function(_, opts)
+      vim.list_extend(opts.adapters, {
+        require "neotest-rust",
+      })
+    end,
   },
 }

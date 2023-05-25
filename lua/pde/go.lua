@@ -6,7 +6,7 @@ return {
   {
     "nvim-treesitter/nvim-treesitter",
     opts = function(_, opts)
-      vim.list_extend(opts.ensure_installed, { "go", "gomod" })
+      vim.list_extend(opts.ensure_installed, { "go", "gomod", "gowork", "gosum" })
     end,
   },
   {
@@ -85,5 +85,16 @@ return {
   {
     "mfussenegger/nvim-dap",
     dependencies = { "leoluz/nvim-dap-go", opts = {} },
+  },
+  {
+    "nvim-neotest/neotest",
+    dependencies = {
+      "nvim-neotest/neotest-go",
+    },
+    opts = function(_, opts)
+      vim.list_extend(opts.adapters, {
+        require "neotest-go",
+      })
+    end,
   },
 }
