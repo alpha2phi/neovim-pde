@@ -174,6 +174,7 @@ return {
     opts = {
       defaults = {
         ["<leader>t"] = { name = "+Test" },
+        ["<leader>tt"] = { name = "+Task" },
       },
     },
   },
@@ -188,7 +189,6 @@ return {
       vim.g["test#neovim#preserve_screen"] = 1
 
       -- Set up vim-test
-      print "setting up vim-test"
       for k, _ in pairs(opts.setup) do
         opts.setup[k](plugin, opts)
       end
@@ -202,6 +202,7 @@ return {
       "antoinemadec/FixCursorHold.nvim",
       "nvim-neotest/neotest-vim-test",
       "vim-test/vim-test",
+      "stevearc/overseer.nvim",
     },
     keys = {
       { "<leader>tF", "<cmd>w|lua require('neotest').run.run({vim.fn.expand('%'), strategy = 'dap'})<cr>", desc = "Debug File" },
@@ -222,6 +223,14 @@ return {
             ignore_file_types = { "python", "vim", "lua" },
           },
         },
+        -- overseer.nvim
+        consumers = {
+          overseer = require "neotest.consumers.overseer",
+        },
+        overseer = {
+          enabled = true,
+          force_default = true,
+        },
       }
     end,
     config = function(_, opts)
@@ -236,5 +245,22 @@ return {
       }, neotest_ns)
       require("neotest").setup(opts)
     end,
+  },
+  {
+    "stevearc/overseer.nvim",
+    keys = {
+      { "<leader>ttR", "<cmd>OverseerRunCmd<cr>", desc = "Run Command" },
+      { "<leader>tta", "<cmd>OverseerTaskAction<cr>", desc = "Task Action" },
+      { "<leader>ttb", "<cmd>OverseerBuild<cr>", desc = "Build" },
+      { "<leader>ttc", "<cmd>OverseerClose<cr>", desc = "Close" },
+      { "<leader>ttd", "<cmd>OverseerDeleteBundle<cr>", desc = "Delete Bundle" },
+      { "<leader>ttl", "<cmd>OverseerLoadBundle<cr>", desc = "Load Bundle" },
+      { "<leader>tto", "<cmd>OverseerOpen<cr>", desc = "Open" },
+      { "<leader>ttq", "<cmd>OverseerQuickAction<cr>", desc = "Quick Action" },
+      { "<leader>ttr", "<cmd>OverseerRun<cr>", desc = "Run" },
+      { "<leader>tts", "<cmd>OverseerSaveBundle<cr>", desc = "Save Bundle" },
+      { "<leader>ttt", "<cmd>OverseerToggle<cr>", desc = "Toggle" },
+    },
+    opts = {},
   },
 }
