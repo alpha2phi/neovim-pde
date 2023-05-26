@@ -76,6 +76,18 @@ return {
               map("n", "<leader>lt", "<cmd>GoTest<Cr>", "Go Test")
               map("n", "<leader>lR", "<cmd>GoRun<Cr>", "Go Run")
               map("n", "<leader>dT", "<cmd>lua require('dap-go').debug_test()<cr>", "Go Debug Test")
+              
+              if not client.server_capabilities.semanticTokensProvider then
+                local semantic = client.config.capabilities.textDocument.semanticTokens
+                client.server_capabilities.semanticTokensProvider = {
+                  full = true,
+                  legend = {
+                    tokenTypes = semantic.tokenTypes,
+                    tokenModifiers = semantic.tokenModifiers,
+                  },
+                  range = true,
+                }
+              end
             end
           end)
         end,
