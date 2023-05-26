@@ -8,6 +8,7 @@ return {
     lua = true,
     python = true,
     rust = true,
+    tailwind = true,
     typescript = true,
   },
 }

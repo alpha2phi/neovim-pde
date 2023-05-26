@@ -1,3 +1,7 @@
+if not require("config").pde.tailwind then
+  return {}
+end
+
 return {
   {
     "neovim/nvim-lspconfig",
