@@ -32,7 +32,7 @@ return {
       "hrsh7th/cmp-buffer",
       "hrsh7th/cmp-path",
     },
-    config = function()
+    opts = function()
       local cmp = require "cmp"
       local luasnip = require "luasnip"
       local compare = require "cmp.config.compare"
@@ -53,7 +53,7 @@ return {
         return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match "%s" == nil
       end
 
-      cmp.setup {
+      return {
         completion = {
           completeopt = "menu,menuone,noinsert",
         },
@@ -133,6 +133,10 @@ return {
             item.dup = duplicates[entry.source.name] or duplicates_default
             return item
           end,
+        },
+        experimental = {
+          hl_group = "LspCodeLens",
+          ghost_text = {},
         },
       }
     end,
