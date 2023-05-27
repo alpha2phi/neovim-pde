@@ -12,7 +12,7 @@ return {
   {
     "williamboman/mason.nvim",
     opts = function(_, opts)
-      vim.list_extend(opts.ensure_installed, { "prettierd", "emmet-ls" })
+      vim.list_extend(opts.ensure_installed, { "prettierd" })
     end,
   },
   {
@@ -21,14 +21,7 @@ return {
       -- make sure mason installs the server
       servers = {
         -- Emmet
-        eslint = {
-          settings = {
-            workingDirectory = { mode = "auto" },
-          },
-        },
-      },
-      setup = {
-        ["emmet-ls"] = {
+        emmet_ls = {
           init_options = {
             html = {
               options = {
@@ -46,6 +39,12 @@ return {
     opts = function(_, opts)
       local nls = require "null-ls"
       table.insert(opts.sources, nls.builtins.formatting.prettierd)
+    end,
+  },
+  {
+    "NvChad/nvim-colorizer.lua",
+    config = function()
+      print "todo"
     end,
   },
 }
