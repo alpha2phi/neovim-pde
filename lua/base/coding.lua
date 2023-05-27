@@ -138,6 +138,12 @@ return {
           hl_group = "LspCodeLens",
           ghost_text = {},
         },
+        window = {
+          documentation = {
+            border = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" },
+            winhighlight = "NormalFloat:NormalFloat,FloatBorder:TelescopeBorder",
+          },
+        },
       }
     end,
   },

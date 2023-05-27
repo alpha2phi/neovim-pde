@@ -31,6 +31,7 @@ return {
             },
           },
         },
+        cssls = {},
       },
     },
   },
@@ -44,7 +45,7 @@ return {
   {
     "NvChad/nvim-colorizer.lua",
     config = function()
-      print "todo"
+      print "todo" -- TODO:
     end,
   },
 }
