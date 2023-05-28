@@ -10,6 +10,19 @@ return {
     end,
   },
   {
+    "williamboman/mason.nvim",
+    opts = function(_, opts)
+      table.insert(opts.ensure_installed, "js-debug-adapter")
+    end,
+  },
+  {
+    "mxsdev/nvim-dap-vscode-js",
+    dependencies = { "mfussenegger/nvim-dap" },
+    opts = function()
+      return {}
+    end,
+  },
+  {
     "neovim/nvim-lspconfig",
     dependencies = { "jose-elias-alvarez/typescript.nvim" },
     opts = {

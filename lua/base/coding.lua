@@ -234,6 +234,8 @@ return {
             ignore_file_types = { "python", "vim", "lua" },
           },
         },
+        status = { virtual_text = true },
+        output = { open_on_run = true },
         -- overseer.nvim
         consumers = {
           overseer = require "neotest.consumers.overseer",
