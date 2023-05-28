@@ -1,10 +1,10 @@
 return {
   pde = {
     angular = true,
-    cpp = true,
-    go = true,
+    cpp = false,
+    go = false,
     html = true,
-    java = true,
+    java = false,
     json = true,
     lua = true,
     python = true,
