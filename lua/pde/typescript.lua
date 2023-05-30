@@ -6,7 +6,7 @@ return {
   {
     "nvim-treesitter/nvim-treesitter",
     opts = function(_, opts)
-      vim.list_extend(opts.ensure_installed, { "typescript", "tsx" })
+      vim.list_extend(opts.ensure_installed, { "javascirpt", "typescript", "tsx" })
     end,
   },
   {
@@ -91,6 +91,33 @@ return {
     "jose-elias-alvarez/null-ls.nvim",
     opts = function(_, opts)
       table.insert(opts.sources, require "typescript.extensions.null-ls.code-actions")
+    end,
+  },
+  {
+    "nvim-neotest/neotest",
+    dependencies = {
+      "nvim-neotest/neotest-jest",
+      "marilari88/neotest-vitest",
+      "thenbe/neotest-playwright",
+    },
+    opts = function(_, opts)
+      vim.list_extend(opts.adapters, {
+        require "neotest-jest" {
+          jestCommand = "npm test --",
+          jestConfigFile = "custom.jest.config.ts",
+          env = { CI = true },
+          cwd = function(path)
+            return vim.fn.getcwd()
+          end,
+        },
+        require "neotest-vitest",
+        require("neotest-playwright").adapter {
+          options = {
+            persist_project_selection = true,
+            enable_dynamic_test_discovery = true,
+          },
+        },
+      })
     end,
   },
 }

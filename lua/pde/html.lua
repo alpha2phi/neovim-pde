@@ -6,7 +6,7 @@ return {
   {
     "nvim-treesitter/nvim-treesitter",
     opts = function(_, opts)
-      vim.list_extend(opts.ensure_installed, { "html" })
+      vim.list_extend(opts.ensure_installed, { "html", "css" })
     end,
   },
   {
@@ -48,13 +48,22 @@ return {
     end,
   },
   {
-    "NvChad/nvim-colorizer.lua",
-    opts = {},
-    cmd = { "ColorizerToggle", "ColorizerAttachToBuffer", "ColorizerDetachFromBuffer", "ColorizerReloadAllBuffers" },
+    "folke/which-key.nvim",
+    event = "VeryLazy",
+    opts = {
+      defaults = {
+        ["<leader>lz"] = { name = "+Color" },
+      },
+    },
   },
   {
     "uga-rosa/ccc.nvim",
     opts = {},
     cmd = { "CccPick", "CccConvert", "CccHighlighterEnable", "CccHighlighterDisable", "CccHighlighterToggle" },
+    keys = {
+      { "<leader>zp", "<cmd>CccPick<cr>", desc = "Pick" },
+      { "<leader>zc", "<cmd>CccConvert<cr>", desc = "Convert" },
+      { "<leader>zh", "<cmd>CccHighlighterToggle<cr>", desc = "Toggle Highlighter" },
+    },
   },
 }
