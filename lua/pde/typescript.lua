@@ -6,20 +6,13 @@ return {
   {
     "nvim-treesitter/nvim-treesitter",
     opts = function(_, opts)
-      vim.list_extend(opts.ensure_installed, { "javascirpt", "typescript", "tsx" })
+      vim.list_extend(opts.ensure_installed, { "javascript", "typescript", "tsx" })
     end,
   },
   {
     "williamboman/mason.nvim",
     opts = function(_, opts)
       table.insert(opts.ensure_installed, "js-debug-adapter")
-    end,
-  },
-  {
-    "mxsdev/nvim-dap-vscode-js",
-    dependencies = { "mfussenegger/nvim-dap" },
-    opts = function()
-      return {}
     end,
   },
   {
@@ -94,6 +87,78 @@ return {
     end,
   },
   {
+    "mfussenegger/nvim-dap",
+    dependencies = { "mxsdev/nvim-dap-vscode-js" },
+    opts = {
+      setup = {
+        vscode_js_debug = function()
+          local function get_js_debug()
+            local mason_registry = require "mason-registry"
+            local js_debug = mason_registry.get_package "js-debug-adapter"
+            return js_debug:get_install_path()
+          end
+
+          require("dap-vscode-js").setup {
+            node_path = "node",
+            debugger_path = get_js_debug(),
+            adapters = { "pwa-node", "pwa-chrome", "pwa-msedge", "node-terminal", "pwa-extensionHost" },
+          }
+
+          for _, language in ipairs { "typescript", "javascript" } do
+            require("dap").configurations[language] = {
+              {
+                type = "pwa-node",
+                request = "launch",
+                name = "Launch file",
+                program = "${file}",
+                cwd = "${workspaceFolder}",
+              },
+              {
+                type = "pwa-node",
+                request = "attach",
+                name = "Attach",
+                processId = require("dap.utils").pick_process,
+                cwd = "${workspaceFolder}",
+              },
+              {
+                type = "pwa-node",
+                request = "launch",
+                name = "Debug Jest Tests",
+                -- trace = true, -- include debugger info
+                runtimeExecutable = "node",
+                runtimeArgs = {
+                  "./node_modules/jest/bin/jest.js",
+                  "--runInBand",
+                },
+                rootPath = "${workspaceFolder}",
+                cwd = "${workspaceFolder}",
+                console = "integratedTerminal",
+                internalConsoleOptions = "neverOpen",
+              },
+              {
+                type = "pwa-chrome",
+                name = "Attach - Remote Debugging",
+                request = "attach",
+                program = "${file}",
+                cwd = vim.fn.getcwd(),
+                sourceMaps = true,
+                protocol = "inspector",
+                port = 9222,
+                webRoot = "${workspaceFolder}",
+              },
+              {
+                type = "pwa-chrome",
+                name = "Launch Chrome",
+                request = "launch",
+                url = "http://localhost:3000",
+              },
+            }
+          end
+        end,
+      },
+    },
+  },
+  {
     "nvim-neotest/neotest",
     dependencies = {
       "nvim-neotest/neotest-jest",
@@ -102,14 +167,7 @@ return {
     },
     opts = function(_, opts)
       vim.list_extend(opts.adapters, {
-        require "neotest-jest" {
-          jestCommand = "npm test --",
-          jestConfigFile = "custom.jest.config.ts",
-          env = { CI = true },
-          cwd = function(path)
-            return vim.fn.getcwd()
-          end,
-        },
+        require "neotest-jest",
         require "neotest-vitest",
         require("neotest-playwright").adapter {
           options = {
