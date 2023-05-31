@@ -9,12 +9,12 @@ return {
       vim.list_extend(opts.ensure_installed, { "javascript", "typescript", "tsx" })
     end,
   },
-  {
-    "williamboman/mason.nvim",
-    opts = function(_, opts)
-      table.insert(opts.ensure_installed, "js-debug-adapter")
-    end,
-  },
+  -- {
+  --   "williamboman/mason.nvim",
+  --   opts = function(_, opts)
+  --     table.insert(opts.ensure_installed, "js-debug-adapter")
+  --   end,
+  -- },
   {
     "neovim/nvim-lspconfig",
     dependencies = { "jose-elias-alvarez/typescript.nvim" },
@@ -88,14 +88,19 @@ return {
   },
   {
     "mfussenegger/nvim-dap",
-    dependencies = { "mxsdev/nvim-dap-vscode-js" },
+    dependencies = {
+      { "mxsdev/nvim-dap-vscode-js" },
+      {
+        "microsoft/vscode-js-debug",
+        build = "npm install --legacy-peer-deps && npx gulp vsDebugServerBundle && mv dist out",
+      },
+    },
     opts = {
       setup = {
         vscode_js_debug = function()
           local function get_js_debug()
-            local mason_registry = require "mason-registry"
-            local js_debug = mason_registry.get_package "js-debug-adapter"
-            return js_debug:get_install_path()
+            local path = vim.fn.stdpath "data"
+            return path .. "/lazy/vscode-js-debug"
           end
 
           require("dap-vscode-js").setup {
@@ -143,14 +148,40 @@ return {
                 cwd = vim.fn.getcwd(),
                 sourceMaps = true,
                 protocol = "inspector",
-                port = 9222,
+                port = 9222, -- Start Chrome google-chrome --remote-debugging-port=9222
                 webRoot = "${workspaceFolder}",
               },
               {
                 type = "pwa-chrome",
                 name = "Launch Chrome",
                 request = "launch",
-                url = "http://localhost:3000",
+                url = "http://localhost:5173", -- This is for Vite. Change it to the framework you use
+                webRoot = "${workspaceFolder}",
+                userDataDir = "${workspaceFolder}/.vscode/vscode-chrome-debug-userdatadir",
+              },
+            }
+          end
+
+          for _, language in ipairs { "typescriptreact", "javascriptreact" } do
+            require("dap").configurations[language] = {
+              {
+                type = "pwa-chrome",
+                name = "Attach - Remote Debugging",
+                request = "attach",
+                program = "${file}",
+                cwd = vim.fn.getcwd(),
+                sourceMaps = true,
+                protocol = "inspector",
+                port = 9222, -- Start Chrome google-chrome --remote-debugging-port=9222
+                webRoot = "${workspaceFolder}",
+              },
+              {
+                type = "pwa-chrome",
+                name = "Launch Chrome",
+                request = "launch",
+                url = "http://localhost:5173", -- This is for Vite. Change it to the framework you use
+                webRoot = "${workspaceFolder}",
+                userDataDir = "${workspaceFolder}/.vscode/vscode-chrome-debug-userdatadir",
               },
             }
           end
