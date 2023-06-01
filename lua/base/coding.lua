@@ -32,7 +32,7 @@ return {
       "hrsh7th/cmp-buffer",
       "hrsh7th/cmp-path",
     },
-    config = function()
+    opts = function()
       local cmp = require "cmp"
       local luasnip = require "luasnip"
       local compare = require "cmp.config.compare"
@@ -53,7 +53,7 @@ return {
         return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match "%s" == nil
       end
 
-      cmp.setup {
+      return {
         completion = {
           completeopt = "menu,menuone,noinsert",
         },
@@ -134,6 +134,16 @@ return {
             return item
           end,
         },
+        experimental = {
+          hl_group = "LspCodeLens",
+          ghost_text = {},
+        },
+        window = {
+          documentation = {
+            border = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" },
+            winhighlight = "NormalFloat:NormalFloat,FloatBorder:TelescopeBorder",
+          },
+        },
       }
     end,
   },
@@ -205,10 +215,11 @@ return {
       "stevearc/overseer.nvim",
     },
     keys = {
-      { "<leader>tF", "<cmd>w|lua require('neotest').run.run({vim.fn.expand('%'), strategy = 'dap'})<cr>", desc = "Debug File" },
+      { "<leader>td", "<cmd>w|lua require('neotest').run.run({vim.fn.expand('%'), strategy = 'dap'})<cr>", desc = "Debug File" },
       { "<leader>tL", "<cmd>w|lua require('neotest').run.run_last({strategy = 'dap'})<cr>", desc = "Debug Last" },
       { "<leader>ta", "<cmd>w|lua require('neotest').run.attach()<cr>", desc = "Attach" },
       { "<leader>tf", "<cmd>w|lua require('neotest').run.run(vim.fn.expand('%'))<cr>", desc = "File" },
+      { "<leader>tF", "<cmd>w|lua require('neotest').run.run(vim.loop.cwd())<cr>", desc = "All Files" },
       { "<leader>tl", "<cmd>w|lua require('neotest').run.run_last()<cr>", desc = "Last" },
       { "<leader>tn", "<cmd>w|lua require('neotest').run.run()<cr>", desc = "Nearest" },
       { "<leader>tN", "<cmd>w|lua require('neotest').run.run({strategy = 'dap'})<cr>", desc = "Debug Nearest" },
@@ -223,6 +234,8 @@ return {
             ignore_file_types = { "python", "vim", "lua" },
           },
         },
+        status = { virtual_text = true },
+        output = { open_on_run = true },
         -- overseer.nvim
         consumers = {
           overseer = require "neotest.consumers.overseer",
