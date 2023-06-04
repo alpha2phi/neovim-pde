@@ -1,8 +1,8 @@
 return {
   pde = {
     angular = true,
-    cpp = false,
-    csharp = true,
+    cpp = true,
+    csharp = false,
     go = false,
     html = true,
     java = false,
@@ -11,6 +11,7 @@ return {
     python = true,
     react = true,
     rust = true,
+    solidty = true,
     svelte = true,
     tailwind = true,
     typescript = true,
