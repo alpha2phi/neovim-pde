@@ -2,6 +2,7 @@ return {
   pde = {
     angular = true,
     cpp = false,
+    csharp = true,
     go = false,
     html = true,
     java = false,
