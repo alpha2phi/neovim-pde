@@ -4,30 +4,45 @@ end
 
 local CELL_MARKER_COLOR = "#C5C5C5"
 local CELL_MARKER = "^# %%%%"
+local CELL_MARKER_SIGN = "cell_marker_sign"
 
 vim.api.nvim_set_hl(0, "cell_marker_hl", { bg = CELL_MARKER_COLOR })
-vim.fn.sign_define("cell_marker_sign", { linehl = "cell_marker_hl" })
+vim.fn.sign_define(CELL_MARKER_SIGN, { linehl = "cell_marker_hl" })
 
-local function highlight_cell_markers()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local sign_name = "cell_marker_sign"
+local function highlight_cell_marker(bufnr, line)
+  local sign_name = CELL_MARKER_SIGN
   local sign_text = "%%"
+  vim.fn.sign_place(line, CELL_MARKER_SIGN, sign_name, bufnr, {
+    lnum = line,
+    priority = 10,
+    text = sign_text,
+  })
+end
 
-  vim.fn.sign_unplace("cell_marker_sign", { buffer = bufnr })
+local function show_cell_markers()
+  local bufnr = vim.api.nvim_get_current_buf()
+  vim.fn.sign_unplace(CELL_MARKER_SIGN, { buffer = bufnr })
   local total_lines = vim.api.nvim_buf_line_count(bufnr)
   for line = 1, total_lines do
     local line_content = vim.api.nvim_buf_get_lines(bufnr, line - 1, line, false)[1]
     if line_content:find(CELL_MARKER) then
-      vim.fn.sign_place(line, "cell_marker_sign", sign_name, bufnr, {
-        lnum = line,
-        priority = 10,
-        text = sign_text,
-      })
+      highlight_cell_marker(bufnr, line)
     end
   end
 end
 
-local function execute_cell()
+local function show_cell_marker()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local line = vim.api.nvim_win_get_cursor(0)[1]
+  local line_content = vim.api.nvim_buf_get_lines(bufnr, line - 1, line, false)[1]
+  if line_content:find(CELL_MARKER) then
+    highlight_cell_marker(bufnr, line)
+  else
+    vim.fn.sign_unplace(CELL_MARKER_SIGN, { buffer = bufnr, id = line })
+  end
+end
+
+local function select_cell()
   local bufnr = vim.api.nvim_get_current_buf()
   local current_row = vim.api.nvim_win_get_cursor(0)[1]
   local current_col = vim.api.nvim_win_get_cursor(0)[2]
@@ -42,21 +57,75 @@ local function execute_cell()
       break
     end
   end
-
-  for line = current_row, vim.api.nvim_buf_line_count(bufnr) do
+  local line_count = vim.api.nvim_buf_line_count(bufnr)
+  for line = current_row + 1, line_count do
     local line_content = vim.api.nvim_buf_get_lines(bufnr, line - 1, line, false)[1]
     if line_content:find(CELL_MARKER) then
       end_line = line
       break
     end
   end
+  if start_line and not end_line then
+    end_line = line_count
+  end
+  return current_row, current_col, start_line, end_line
+end
 
-  vim.print(current_row, start_line, end_line)
-  local rows_to_select = end_line - start_line - 3
-  vim.api.nvim_win_set_cursor(0, { start_line + 1, 0 })
-  vim.cmd("normal!V " .. rows_to_select .. "j")
-  require("iron.core").visual_send()
-  vim.api.nvim_win_set_cursor(0, { current_row, current_col })
+local function execute_cell()
+  local current_row, current_col, start_line, end_line = select_cell()
+  if start_line and end_line then
+    local rows_to_select = end_line - start_line - 2
+    vim.api.nvim_win_set_cursor(0, { start_line + 1, 0 })
+    vim.cmd("normal!V " .. rows_to_select .. "j")
+    require("iron.core").visual_send()
+    vim.api.nvim_win_set_cursor(0, { current_row, current_col })
+  end
+end
+
+local function delete_cell()
+  local _, _, start_line, end_line = select_cell()
+  if start_line and end_line then
+    local rows_to_select = end_line - start_line - 1
+    vim.api.nvim_win_set_cursor(0, { start_line, 0 })
+    vim.cmd("normal!V " .. rows_to_select .. "j")
+    vim.cmd "normal!d"
+  end
+end
+
+local function navigate_cell(up)
+  local is_up = up or false
+  local _, _, start_line, end_line = select_cell()
+  if is_up and start_line then
+    vim.api.nvim_win_set_cursor(0, { start_line - 1, 0 })
+  elseif end_line then
+    local bufnr = vim.api.nvim_get_current_buf()
+    local line_count = vim.api.nvim_buf_line_count(bufnr)
+    if end_line ~= line_count then
+      vim.api.nvim_win_set_cursor(0, { end_line + 1, 0 })
+      _, _, start_line, end_line = select_cell()
+      vim.api.nvim_win_set_cursor(0, { end_line - 1, 0 })
+    end
+  end
+end
+
+local function insert_cell(content)
+  local _, _, _, end_line = select_cell()
+  vim.api.nvim_win_set_cursor(0, { end_line - 1, 0 })
+
+  vim.cmd("normal!o" .. content)
+  local bufnr = vim.api.nvim_get_current_buf()
+  local line = vim.api.nvim_win_get_cursor(0)[1]
+  highlight_cell_marker(bufnr, line)
+  vim.cmd "normal!o"
+  vim.cmd "normal!o"
+  vim.cmd "normal!k"
+end
+local function insert_code_cell()
+  insert_cell "# %%"
+end
+
+local function insert_markdown_cell()
+  insert_cell "# %% [markdown]"
 end
 
 return {
@@ -77,11 +146,19 @@ return {
       vim.g.jupytext_fmt = "py:percent"
 
       -- Autocmd to set cell markers
-      vim.api.nvim_create_autocmd({ "BufEnter", "BufWriteCmd" }, {
-        group = vim.api.nvim_create_augroup("au_toggle_cell_marker", { clear = true }),
+      vim.api.nvim_create_autocmd({ "BufEnter" }, { -- "BufWriteCmd"
+        group = vim.api.nvim_create_augroup("au_show_cell_markers", { clear = true }),
         pattern = { "*.py", "*.ipynb" },
         callback = function()
-          vim.schedule(highlight_cell_markers)
+          vim.schedule(show_cell_markers)
+        end,
+      })
+
+      vim.api.nvim_create_autocmd({ "CursorHold", "InsertLeave" }, {
+        group = vim.api.nvim_create_augroup("au_check_cell_marker", { clear = true }),
+        pattern = { "*.py", "*.ipynb" },
+        callback = function()
+          vim.schedule(show_cell_marker)
         end,
       })
     end,
@@ -113,21 +190,26 @@ return {
     end,
     -- stylua: ignore
     keys = {
-      { "<leader>xe", execute_cell, desc = "Execute Cell" },
+      { "<A-e>", execute_cell, desc = "Execute Cell" },
+      { "<A-i>", insert_code_cell, desc = "Insert Code Cell" },
+      { "<A-r>", insert_markdown_cell, desc = "Insert Markdown Cell" },
+      { "<A-x>", delete_cell, desc = "Delete Cell" },
+      { "<A-j>", navigate_cell, desc = "Next Cell" },
+      { "<A-k>", function() navigate_cell(true) end, desc = "Previous Cell" },
       { "<leader>xs", function() require("iron.core").run_motion("send_motion") end, desc = "Send Motion" },
       { "<leader>xs", function() require("iron.core").visual_send() end, mode = {"v"}, desc = "Send" },
       { "<leader>xl", function() require("iron.core").send_line() end, desc = "Send Line" },
       { "<leader>xt", function() require("iron.core").send_until_cursor() end, desc = "Send Until Cursor" },
       { "<leader>xf", function() require("iron.core").send_file() end, desc = "Send File" },
-      { "<leader>xh", function() require("iron.marks").clear_hl() end, mode = {"v"}, desc = "Clear Highlight" },
+      { "<leader>xH", function() require("iron.marks").clear_hl() end, mode = {"v"}, desc = "Clear Highlight" },
       { "<leader>x<cr>", function() require("iron.core").send(nil, string.char(13)) end, desc = "ENTER" },
-      { "<leader>xi", function() require("iron.core").send(nil, string.char(03)) end, desc = "Interrupt" },
+      { "<leader>xI", function() require("iron.core").send(nil, string.char(03)) end, desc = "Interrupt" },
       { "<leader>xq", function() require("iron.core").close_repl() end, desc = "Close REPL" },
       { "<leader>xc", function() require("iron.core").send(nil, string.char(12)) end, desc = "Clear" },
-      { "<leader>xms", function() require("iron.core").send_mark() end, desc = "Send Mark" },
-      { "<leader>xmm", function() require("iron.core").run_motion("mark_motion") end, desc = "Mark Motion" },
-      { "<leader>xmv", function() require("iron.core").mark_visual() end, mode = {"v"}, desc = "Mark Visual" },
-      { "<leader>xmr", function() require("iron.marks").drop_last() end, desc = "Remove Mark" },
+      { "<leader>xMs", function() require("iron.core").send_mark() end, desc = "Send Mark" },
+      { "<leader>xMm", function() require("iron.core").run_motion("mark_motion") end, desc = "Mark Motion" },
+      { "<leader>xMv", function() require("iron.core").mark_visual() end, mode = {"v"}, desc = "Mark Visual" },
+      { "<leader>xMr", function() require("iron.marks").drop_last() end, desc = "Remove Mark" },
       { "<leader>xR", "<cmd>IronRepl<cr>", desc = "REPL" },
       { "<leader>xS", "<cmd>IronRestart<cr>", desc = "Restart" },
       { "<leader>xF", "<cmd>IronFocus<cr>", desc = "Focus" },
