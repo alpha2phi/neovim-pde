@@ -132,6 +132,41 @@ local function insert_markdown_cell()
   insert_cell "# %% [markdown]"
 end
 
+local function repl_menu()
+  local cmd = require("hydra.keymap-util").cmd
+
+  local hint = [[
+ ^
+ _e_: Execute Cell
+ _i_: Insert Cell
+ _m_: Insert Markdown Cell
+ ^
+ ^ ^  _q_: Quit 
+]]
+
+  return {
+    name = "REPL",
+    hint = hint,
+    config = {
+      color = "pink",
+      invoke_on_body = true,
+      hint = {
+        border = "rounded",
+        position = "top-left",
+      },
+    },
+    mode = "n",
+    body = "<A-n>",
+    -- stylua: ignore
+    heads = {
+      { "e", execute_cell, desc = "Execute Cell", },
+      { "i", insert_code_cell, desc = "Insert Cell", },
+      { "m", insert_markdown_cell, desc = "Insert Markdown Cell", },
+      { "q", nil, { exit = true, nowait = true, desc = "Exit" } },
+    },
+  }
+end
+
 return {
   {
     "goerz/jupytext.vim",
@@ -233,6 +268,14 @@ return {
       defaults = {
         ["<leader>x"] = { name = "+REPL" },
         ["<leader>xm"] = { name = "+Mark" },
+      },
+    },
+  },
+  {
+    "anuvyklack/hydra.nvim",
+    opts = {
+      specs = {
+        repl = repl_menu(),
       },
     },
   },
