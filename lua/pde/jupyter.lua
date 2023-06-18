@@ -139,7 +139,26 @@ local function repl_menu()
  ^
  _e_: Execute Cell
  _i_: Insert Cell
- _m_: Insert Markdown Cell
+ _j_: Next Cell
+ _k_: Previous Cell
+ _r_: Insert Markdown Cell
+ _x_: Delete Cell
+ ^
+ _s_: Send Motion
+ _l_: Send Line
+ _t_: Send Until Cursor
+ _f_: Send File
+ ^
+ _R_: Show REPL
+ _C_: Close REPL
+ _S_: Restart REPL
+ _F_: Focus
+ _H_: Hide
+ ^
+ _c_: Clear
+ _L_: Clear Highlight
+ _<cr>_: ENTER
+ _I_: Interrupt
  ^
  ^ ^  _q_: Quit 
 ]]
@@ -161,7 +180,23 @@ local function repl_menu()
     heads = {
       { "e", execute_cell, desc = "Execute Cell", },
       { "i", insert_code_cell, desc = "Insert Cell", },
-      { "m", insert_markdown_cell, desc = "Insert Markdown Cell", },
+      { "j", navigate_cell , desc = "Next Cell", },
+      { "k", function() navigate_cell(true) end, desc = "Previous Cell", },
+      { "r", insert_markdown_cell, desc = "Insert Markdown Cell", },
+      { "x", delete_cell, desc = "Delete Cell", },
+      { "s", function() require("iron.core").run_motion("send_motion") end, desc = "Send Motion" },
+      { "l", function() require("iron.core").send_line() end, desc = "Send Line" },
+      { "t", function() require("iron.core").send_until_cursor() end, desc = "Send Until Cursor" },
+      { "f", function() require("iron.core").send_file() end, desc = "Send File" },
+      { "L", function() require("iron.marks").clear_hl() end, mode = {"v"}, desc = "Clear Highlight" },
+      { "<cr>", function() require("iron.core").send(nil, string.char(13)) end, desc = "ENTER" },
+      { "I", function() require("iron.core").send(nil, string.char(03)) end, desc = "Interrupt" },
+      { "C", function() require("iron.core").close_repl() end, desc = "Close REPL" },
+      { "c", function() require("iron.core").send(nil, string.char(12)) end, desc = "Clear" },
+      { "R", "<cmd>IronRepl<cr>", desc = "REPL" },
+      { "S", "<cmd>IronRestart<cr>", desc = "Restart" },
+      { "F", "<cmd>IronFocus<cr>", desc = "Focus" },
+      { "H", "<cmd>IronHide<cr>", desc = "Hide" },
       { "q", nil, { exit = true, nowait = true, desc = "Exit" } },
     },
   }
@@ -242,11 +277,11 @@ return {
       { "<leader>xl", function() require("iron.core").send_line() end, desc = "Send Line" },
       { "<leader>xt", function() require("iron.core").send_until_cursor() end, desc = "Send Until Cursor" },
       { "<leader>xf", function() require("iron.core").send_file() end, desc = "Send File" },
-      { "<leader>xH", function() require("iron.marks").clear_hl() end, mode = {"v"}, desc = "Clear Highlight" },
+      { "<leader>xL", function() require("iron.marks").clear_hl() end, mode = {"v"}, desc = "Clear Highlight" },
       { "<leader>x<cr>", function() require("iron.core").send(nil, string.char(13)) end, desc = "ENTER" },
       { "<leader>xI", function() require("iron.core").send(nil, string.char(03)) end, desc = "Interrupt" },
-      { "<leader>xq", function() require("iron.core").close_repl() end, desc = "Close REPL" },
-      { "<leader>xc", function() require("iron.core").send(nil, string.char(12)) end, desc = "Clear" },
+      { "<leader>xc", function() require("iron.core").close_repl() end, desc = "Close REPL" },
+      { "<leader>xC", function() require("iron.core").send(nil, string.char(12)) end, desc = "Clear" },
       { "<leader>xms", function() require("iron.core").send_mark() end, desc = "Send Mark" },
       { "<leader>xmm", function() require("iron.core").run_motion("mark_motion") end, desc = "Mark Motion" },
       { "<leader>xmv", function() require("iron.core").mark_visual() end, mode = {"v"}, desc = "Mark Visual" },
