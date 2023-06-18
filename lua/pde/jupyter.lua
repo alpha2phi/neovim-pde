@@ -157,7 +157,7 @@ local function repl_menu()
  ^
  _c_: Clear
  _L_: Clear Highlight
- _<cr>_: ENTER
+ _<CR>_: ENTER
  _I_: Interrupt
  ^
  ^ ^  _q_: Quit 
@@ -189,14 +189,14 @@ local function repl_menu()
       { "t", function() require("iron.core").send_until_cursor() end, desc = "Send Until Cursor" },
       { "f", function() require("iron.core").send_file() end, desc = "Send File" },
       { "L", function() require("iron.marks").clear_hl() end, mode = {"v"}, desc = "Clear Highlight" },
-      { "<cr>", function() require("iron.core").send(nil, string.char(13)) end, desc = "ENTER" },
+      { "<CR>", function() require("iron.core").send(nil, string.char(13)) end, desc = "ENTER" },
       { "I", function() require("iron.core").send(nil, string.char(03)) end, desc = "Interrupt" },
       { "C", function() require("iron.core").close_repl() end, desc = "Close REPL" },
       { "c", function() require("iron.core").send(nil, string.char(12)) end, desc = "Clear" },
-      { "R", "<cmd>IronRepl<cr>", desc = "REPL" },
-      { "S", "<cmd>IronRestart<cr>", desc = "Restart" },
-      { "F", "<cmd>IronFocus<cr>", desc = "Focus" },
-      { "H", "<cmd>IronHide<cr>", desc = "Hide" },
+      { "R", cmd("IronRepl"), desc = "REPL" },
+      { "S", cmd("IronRestart"), desc = "Restart" },
+      { "F", cmd("IronFocus"), desc = "Focus" },
+      { "H", cmd("IronHide"), desc = "Hide" },
       { "q", nil, { exit = true, nowait = true, desc = "Exit" } },
     },
   }
@@ -310,7 +310,7 @@ return {
     "anuvyklack/hydra.nvim",
     opts = {
       specs = {
-        repl = repl_menu(),
+        repl = repl_menu,
       },
     },
   },
