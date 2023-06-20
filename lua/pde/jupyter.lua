@@ -65,6 +65,10 @@ local function select_cell()
       break
     end
   end
+
+  if not start_line then
+    start_line = 1
+  end
   if not end_line then
     end_line = line_count
   end
@@ -112,7 +116,8 @@ end
 local function insert_cell(content)
   local _, _, _, end_line = select_cell()
   local bufnr = vim.api.nvim_get_current_buf()
-  if end_line ~= 1 then
+  local line_count = vim.api.nvim_buf_line_count(bufnr)
+  if end_line ~= 1 and end_line ~= line_count then
     vim.api.nvim_win_set_cursor(0, { end_line - 1, 0 })
   else
     vim.api.nvim_win_set_cursor(0, { end_line, 0 })
@@ -222,7 +227,7 @@ return {
       -- Autocmd to set cell markers
       vim.api.nvim_create_autocmd({ "BufEnter" }, { -- "BufWriteCmd"
         group = vim.api.nvim_create_augroup("au_show_cell_markers", { clear = true }),
-        pattern = { "*.py", "*.ipynb" },
+        pattern = { "*.py", "*.ipynb", "*.r", "*.jl", "*.scala" },
         callback = function()
           vim.schedule(show_cell_markers)
         end,
@@ -230,7 +235,7 @@ return {
 
       vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
         group = vim.api.nvim_create_augroup("au_check_cell_marker", { clear = true }),
-        pattern = { "*.py", "*.ipynb" },
+        pattern = { "*.py", "*.ipynb", "*.r", "*.jl", "*.scala" },
         callback = function()
           vim.schedule(show_cell_marker)
         end,
