@@ -100,7 +100,7 @@ end
 local function navigate_cell(up)
   local is_up = up or false
   local _, _, start_line, end_line = select_cell()
-  if is_up and start_line then
+  if is_up and start_line ~= 1 then
     vim.api.nvim_win_set_cursor(0, { start_line - 1, 0 })
   elseif end_line then
     local bufnr = vim.api.nvim_get_current_buf()
@@ -117,16 +117,19 @@ local function insert_cell(content)
   local _, _, _, end_line = select_cell()
   local bufnr = vim.api.nvim_get_current_buf()
   local line_count = vim.api.nvim_buf_line_count(bufnr)
+  local line = end_line
   if end_line ~= 1 and end_line ~= line_count then
+    line = end_line - 1
     vim.api.nvim_win_set_cursor(0, { end_line - 1, 0 })
   else
+    line = end_line
     vim.api.nvim_win_set_cursor(0, { end_line, 0 })
   end
 
-  vim.cmd "normal!o"
-  vim.cmd("normal!o" .. content)
+  vim.cmd "normal!2o"
+  vim.api.nvim_buf_set_lines(bufnr, line, line + 1, false, { content })
   local line = vim.api.nvim_win_get_cursor(0)[1]
-  highlight_cell_marker(bufnr, line)
+  highlight_cell_marker(bufnr, line - 1)
   vim.cmd "normal!2o"
   vim.cmd "normal!k"
 end
