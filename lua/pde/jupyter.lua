@@ -123,12 +123,17 @@ local function insert_cell(content)
     vim.api.nvim_win_set_cursor(0, { end_line, 0 })
   end
 
+  vim.cmd "normal!o"
   vim.cmd("normal!o" .. content)
   local line = vim.api.nvim_win_get_cursor(0)[1]
-  highlight_cell_marker(bufnr, line)
+  local line_content = vim.api.nvim_buf_get_lines(bufnr, line - 1, line, false)[1]
+  if line_content ~= "" and line_content:find(CELL_MARKER) then
+    highlight_cell_marker(bufnr, line)
+  end
   vim.cmd "normal!2o"
   vim.cmd "normal!k"
 end
+
 local function insert_code_cell()
   insert_cell "# %%"
 end
