@@ -116,7 +116,6 @@ end
 local function insert_cell(content)
   local _, _, _, end_line = select_cell()
   local bufnr = vim.api.nvim_get_current_buf()
-  local line_count = vim.api.nvim_buf_line_count(bufnr)
   local line = end_line
   if end_line ~= 1 then
     line = end_line - 1
