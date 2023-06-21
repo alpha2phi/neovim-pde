@@ -128,8 +128,8 @@ local function insert_cell(content)
 
   vim.cmd "normal!2o"
   vim.api.nvim_buf_set_lines(bufnr, line, line + 1, false, { content })
-  local line = vim.api.nvim_win_get_cursor(0)[1]
-  highlight_cell_marker(bufnr, line - 1)
+  local current_line = vim.api.nvim_win_get_cursor(0)[1]
+  highlight_cell_marker(bufnr, current_line - 1)
   vim.cmd "normal!2o"
   vim.cmd "normal!k"
 end
