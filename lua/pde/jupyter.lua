@@ -126,10 +126,7 @@ local function insert_cell(content)
   vim.cmd "normal!o"
   vim.cmd("normal!o" .. content)
   local line = vim.api.nvim_win_get_cursor(0)[1]
-  local line_content = vim.api.nvim_buf_get_lines(bufnr, line - 1, line, false)[1]
-  if line_content ~= "" and line_content:find(CELL_MARKER) then
-    highlight_cell_marker(bufnr, line)
-  end
+  highlight_cell_marker(bufnr, line)
   vim.cmd "normal!2o"
   vim.cmd "normal!k"
 end
