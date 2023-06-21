@@ -26,13 +26,7 @@ return {
     "neovim/nvim-lspconfig",
     opts = {
       servers = {
-        ruff_lsp = {
-          init_options = {
-            settings = {
-              args = { "--max-line-length=180" },
-            },
-          },
-        },
+        ruff_lsp = {},
         pyright = {
           settings = {
             python = {
