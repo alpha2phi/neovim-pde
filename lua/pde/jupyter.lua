@@ -78,9 +78,8 @@ end
 local function execute_cell()
   local current_row, current_col, start_line, end_line = select_cell()
   if start_line and end_line then
-    local rows_to_select = end_line - start_line - 2
-    vim.api.nvim_win_set_cursor(0, { start_line + 1, 0 })
-    vim.cmd("normal!V " .. rows_to_select .. "j")
+    vim.fn.setpos("'<", { 0, start_line + 1, 0, 0 })
+    vim.fn.setpos("'>", { 0, end_line - 1, 0, 0 })
     require("iron.core").visual_send()
     vim.api.nvim_win_set_cursor(0, { current_row, current_col })
   end
@@ -258,6 +257,7 @@ return {
 
           repl_definition = {
             python = require("iron.fts.python").ipython,
+            scala = require("iron.fts.scala").scala,
           },
           -- How the repl window will be displayed
           -- See below for more information
