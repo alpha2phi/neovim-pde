@@ -276,4 +276,130 @@ return {
     },
     opts = {},
   },
+  {
+    "anuvyklack/hydra.nvim",
+    opts = {
+      specs = {
+        test = function()
+          local cmd = require("hydra.keymap-util").cmd
+          local hint = [[
+^
+_f_: File
+_F_: All Files
+_l_: Last
+_n_: Nearest
+^
+_d_: Debug File
+_L_: Debug Last
+_N_: Debug Nearest
+^
+_o_: Output
+_S_: Summary
+^
+_a_: Attach
+_s_: Stop
+^
+^ ^  _q_: Quit 
+          ]]
+          return {
+            name = "Test",
+            hint = hint,
+            config = {
+              color = "pink",
+              invoke_on_body = true,
+              hint = {
+                border = "rounded",
+                position = "top-left",
+              },
+            },
+            mode = "n",
+            body = "<A-t>",
+            heads = {
+              { "F", cmd "w|lua require('neotest').run.run(vim.loop.cwd())", desc = "All Files" },
+              { "L", cmd "w|lua require('neotest').run.run_last({strategy = 'dap'})", desc = "Debug Last" },
+              { "N", cmd "w|lua require('neotest').run.run({strategy = 'dap'})", desc = "Debug Nearest" },
+              { "S", cmd "w|lua require('neotest').summary.toggle()", desc = "Summary" },
+              { "a", cmd "w|lua require('neotest').run.attach()", desc = "Attach" },
+              { "d", cmd "w|lua require('neotest').run.run({vim.fn.expand('%'), strategy = 'dap'}", desc = "Debug File" },
+              { "f", cmd "w|lua require('neotest').run.run(vim.fn.expand('%'))", desc = "File" },
+              { "l", cmd "w|lua require('neotest').run.run_last()", desc = "Last" },
+              { "n", cmd "w|lua require('neotest').run.run()", desc = "Nearest" },
+              { "o", cmd "w|lua require('neotest').output.open({ enter = true })", desc = "Output" },
+              { "s", cmd "w|lua require('neotest').run.stop()", desc = "Stop" },
+              { "q", nil, { exit = true, nowait = true, desc = "Exit" } },
+            },
+          }
+        end,
+      },
+    },
+  },
+  {
+    "echasnovski/mini.hipatterns",
+    event = "BufReadPre",
+    opts = {},
+  },
+  {
+    "echasnovski/mini.ai",
+    event = "VeryLazy",
+    dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
+    opts = function()
+      local ai = require "mini.ai"
+      return {
+        n_lines = 500,
+        custom_textobjects = {
+          o = ai.gen_spec.treesitter({
+            a = { "@block.outer", "@conditional.outer", "@loop.outer" },
+            i = { "@block.inner", "@conditional.inner", "@loop.inner" },
+          }, {}),
+          f = ai.gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }, {}),
+          c = ai.gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }, {}),
+        },
+      }
+    end,
+    config = function(_, opts)
+      require("mini.ai").setup(opts)
+      if require("utils").has "which-key.nvim" then
+        ---@type table<string, string|table>
+        local i = {
+          [" "] = "Whitespace",
+          ['"'] = 'Balanced "',
+          ["'"] = "Balanced '",
+          ["`"] = "Balanced `",
+          ["("] = "Balanced (",
+          [")"] = "Balanced ) including white-space",
+          [">"] = "Balanced > including white-space",
+          ["<lt>"] = "Balanced <",
+          ["]"] = "Balanced ] including white-space",
+          ["["] = "Balanced [",
+          ["}"] = "Balanced } including white-space",
+          ["{"] = "Balanced {",
+          ["?"] = "User Prompt",
+          _ = "Underscore",
+          a = "Argument",
+          b = "Balanced ), ], }",
+          c = "Class",
+          f = "Function",
+          o = "Block, conditional, loop",
+          q = "Quote `, \", '",
+          t = "Tag",
+        }
+        local a = vim.deepcopy(i)
+        for k, v in pairs(a) do
+          a[k] = v:gsub(" including.*", "")
+        end
+
+        local ic = vim.deepcopy(i)
+        local ac = vim.deepcopy(a)
+        for key, name in pairs { n = "Next", l = "Last" } do
+          i[key] = vim.tbl_extend("force", { name = "Inside " .. name .. " textobject" }, ic)
+          a[key] = vim.tbl_extend("force", { name = "Around " .. name .. " textobject" }, ac)
+        end
+        require("which-key").register {
+          mode = { "o", "x" },
+          i = i,
+          a = a,
+        }
+      end
+    end,
+  },
 }

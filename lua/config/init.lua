@@ -1,5 +1,6 @@
 return {
   pde = {
+    ai = true,
     angular = true,
     cpp = true,
     csharp = false,
@@ -7,11 +8,15 @@ return {
     html = true,
     java = false,
     json = true,
+    julia = true,
+    jupyter = true,
     lua = true,
     python = true,
+    r = true,
     react = true,
     rust = true,
-    solidty = true,
+    scala = true,
+    solidity = true,
     svelte = true,
     tailwind = true,
     typescript = true,

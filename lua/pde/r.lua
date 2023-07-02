@@ -1,4 +1,4 @@
-if not require("config").pde.solidty then
+if not require("config").pde.r then
   return {}
 end
 
@@ -6,16 +6,16 @@ return {
   {
     "nvim-treesitter/nvim-treesitter",
     opts = function(_, opts)
-      vim.list_extend(opts.ensure_installed, { "solidity" })
+      vim.list_extend(opts.ensure_installed, { "r" })
     end,
   },
   {
     "neovim/nvim-lspconfig",
     opts = {
       servers = {
-        -- solc = {},
-        -- solang = {},
-        solidity_ls_nomicfoundation = {},
+        r_language_server = {
+          flags = { debounce_text_changes = 150 },
+        },
       },
     },
   },
