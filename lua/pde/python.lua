@@ -6,7 +6,7 @@ return {
   {
     "nvim-treesitter/nvim-treesitter",
     opts = function(_, opts)
-      vim.list_extend(opts.ensure_installed, { "python" })
+      vim.list_extend(opts.ensure_installed, { "ninja", "python", "rst", "toml" })
     end,
   },
   {
@@ -43,6 +43,15 @@ return {
         },
       },
       setup = {
+        ruff_lsp = function()
+          local lsp_utils = require "base.lsp.utils"
+          lsp_utils.on_attach(function(client, _)
+            if client.name == "ruff_lsp" then
+              -- Disable hover in favor of Pyright
+              client.server_capabilities.hoverProvider = false
+            end
+          end)
+        end,
         pyright = function(_, _)
           local lsp_utils = require "base.lsp.utils"
           lsp_utils.on_attach(function(client, bufnr)
@@ -69,7 +78,8 @@ return {
     dependencies = {
       "mfussenegger/nvim-dap-python",
       config = function()
-        require("dap-python").setup() -- Use default python
+        local path = require("mason-registry").get_package("debugpy"):get_install_path()
+        require("dap-python").setup(path .. "/venv/bin/python")
       end,
     },
   },
@@ -90,5 +100,11 @@ return {
   {
     "microsoft/python-type-stubs",
     cond = false,
+  },
+  {
+    "linux-cultist/venv-selector.nvim",
+    cmd = "VenvSelect",
+    opts = {},
+    keys = { { "<leader>lv", "<cmd>:VenvSelect<cr>", desc = "Select VirtualEnv" } },
   },
 }
