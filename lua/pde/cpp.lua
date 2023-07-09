@@ -29,28 +29,62 @@ return {
     dependencies = { "p00f/clangd_extensions.nvim" },
     opts = {
       servers = {
-        clangd = {},
+        clangd = {
+          server = {
+            root_dir = function(...)
+              -- using a root .clang-format or .clang-tidy file messes up projects, so remove them
+              return require("lspconfig.util").root_pattern("compile_commands.json", "compile_flags.txt", "configure.ac", ".git")(...)
+            end,
+            capabilities = {
+              offsetEncoding = { "utf-16" },
+            },
+            cmd = {
+              "clangd",
+              "--background-index",
+              "--clang-tidy",
+              "--header-insertion=iwyu",
+              "--completion-style=detailed",
+              "--function-arg-placeholders",
+              "--fallback-style=llvm",
+            },
+            init_options = {
+              usePlaceholders = true,
+              completeUnimported = true,
+              clangdFileStatus = true,
+            },
+          },
+          extensions = {
+            inlay_hints = {
+              inline = false,
+            },
+            ast = {
+              --These require codicons (https://github.com/microsoft/vscode-codicons)
+              role_icons = {
+                type = "",
+                declaration = "",
+                expression = "",
+                specifier = "",
+                statement = "",
+                ["template argument"] = "",
+              },
+              kind_icons = {
+                Compound = "",
+                Recovery = "",
+                TranslationUnit = "",
+                PackExpansion = "",
+                TemplateTypeParm = "",
+                TemplateTemplateParm = "",
+                TemplateParamObject = "",
+              },
+            },
+          },
+        },
       },
       setup = {
-        clangd = function(_, _)
-          local clangd_flags = {
-            "--background-index",
-            "--fallback-style=Google",
-            "--all-scopes-completion",
-            "--clang-tidy",
-            "--log=error",
-            "--suggest-missing-includes",
-            "--cross-file-rename",
-            "--completion-style=detailed",
-            "--pch-storage=memory", -- could also be disk
-            "--folding-ranges",
-            "--enable-config", -- clangd 11+ supports reading from .clangd configuration file
-            "--offset-encoding=utf-16", --temporary fix for null-ls
-          }
+        clangd = function(_, opts)
           require("clangd_extensions").setup {
-            server = {
-              cmd = { "clangd", unpack(clangd_flags) },
-            },
+            server = opts.server,
+            extensions = opts.extensions,
           }
           return true
         end,
@@ -66,6 +100,7 @@ return {
           local dap = require "dap"
           dap.adapters.codelldb = {
             type = "server",
+            host = "localhost",
             port = "${port}",
             executable = {
               command = codelldb_path,
@@ -93,6 +128,12 @@ return {
         end,
       },
     },
+  },
+  {
+    "nvim-cmp",
+    opts = function(_, opts)
+      table.insert(opts.sorting.comparators, 1, require "clangd_extensions.cmp_scores")
+    end,
   },
   {
     "nvim-neotest/neotest",

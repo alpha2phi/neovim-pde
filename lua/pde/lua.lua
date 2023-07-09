@@ -28,8 +28,7 @@ return {
       {
         "folke/neodev.nvim",
         opts = {
-          plugins = { "neotest" },
-          types = true,
+          library = { plugins = { "neotest", "nvim-dap-ui" }, types = true },
         },
       },
     },

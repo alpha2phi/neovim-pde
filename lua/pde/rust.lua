@@ -7,7 +7,7 @@ local function get_codelldb()
   local codelldb = mason_registry.get_package "codelldb"
   local extension_path = codelldb:get_install_path() .. "/extension/"
   local codelldb_path = extension_path .. "adapter/codelldb"
-  local liblldb_path = extension_path .. "lldb/lib/liblldb.so"
+  local liblldb_path = vim.fn.has "mac" == 1 and extension_path .. "lldb/lib/liblldb.dylib" or extension_path .. "lldb/lib/liblldb.so"
   return codelldb_path, liblldb_path
 end
 
@@ -15,7 +15,7 @@ return {
   {
     "nvim-treesitter/nvim-treesitter",
     opts = function(_, opts)
-      vim.list_extend(opts.ensure_installed, { "rust" })
+      vim.list_extend(opts.ensure_installed, { "ron", "rust", "toml" })
     end,
   },
   {
@@ -32,16 +32,31 @@ return {
         rust_analyzer = {
           settings = {
             ["rust-analyzer"] = {
-              cargo = { allFeatures = true },
-              -- checkOnSave = {
-              --   command = "cargo clippy",
-              --   extraArgs = { "--no-deps" },
-              -- },
+              cargo = {
+                allFeatures = true,
+                loadOutDirsFromCheck = true,
+                runBuildScripts = true,
+              },
+              -- Add clippy lints for Rust.
+              checkOnSave = {
+                allFeatures = true,
+                command = "clippy",
+                extraArgs = { "--no-deps" },
+              },
+              procMacro = {
+                enable = true,
+                ignored = {
+                  ["async-trait"] = { "async_trait" },
+                  ["napi-derive"] = { "napi" },
+                  ["async-recursion"] = { "async_recursion" },
+                },
+              },
             },
           },
         },
       },
       setup = {
+        taplo = {},
         rust_analyzer = function(_, opts)
           local codelldb_path, liblldb_path = get_codelldb()
           local lsp_utils = require "base.lsp.utils"
@@ -89,12 +104,13 @@ return {
             tools = {
               hover_actions = { border = "solid" },
               on_initialized = function()
-                vim.api.nvim_create_autocmd({ "BufWritePost", "BufEnter", "CursorHold", "InsertLeave" }, {
-                  pattern = { "*.rs" },
-                  callback = function()
-                    vim.lsp.codelens.refresh()
-                  end,
-                })
+                vim.cmd [[
+                  augroup RustLSP
+                    autocmd CursorHold                      *.rs silent! lua vim.lsp.buf.document_highlight()
+                    autocmd CursorMoved,InsertEnter         *.rs silent! lua vim.lsp.buf.clear_references()
+                    autocmd BufEnter,CursorHold,InsertLeave *.rs silent! lua vim.lsp.codelens.refresh()
+                  augroup END
+                ]]
               end,
             },
             server = opts,
@@ -108,7 +124,7 @@ return {
     },
   },
   {
-    "saecki/crates.nvim",
+    "Saecki/crates.nvim",
     event = { "BufRead Cargo.toml" },
     opts = {
       null_ls = {
@@ -121,6 +137,22 @@ return {
     },
     config = function(_, opts)
       require("crates").setup(opts)
+    end,
+  },
+  {
+    "hrsh7th/nvim-cmp",
+    dependencies = {
+      {
+        "Saecki/crates.nvim",
+        event = { "BufRead Cargo.toml" },
+        config = true,
+      },
+    },
+    opts = function(_, opts)
+      local cmp = require "cmp"
+      opts.sources = cmp.config.sources(vim.list_extend(opts.sources, {
+        { name = "crates" },
+      }))
     end,
   },
   {
