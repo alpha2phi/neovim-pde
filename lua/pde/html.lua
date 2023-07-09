@@ -53,7 +53,7 @@ return {
     opts = {
       defaults = {
         ["<leader>z"] = { name = "+System" },
-        ["<leader>zc"] = { name = "+Color" },
+        ["<leader>zC"] = { name = "+Color" },
       },
     },
   },
