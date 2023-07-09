@@ -62,9 +62,9 @@ return {
     opts = {},
     cmd = { "CccPick", "CccConvert", "CccHighlighterEnable", "CccHighlighterDisable", "CccHighlighterToggle" },
     keys = {
-      { "<leader>zcp", "<cmd>CccPick<cr>", desc = "Pick" },
-      { "<leader>zcc", "<cmd>CccConvert<cr>", desc = "Convert" },
-      { "<leader>zch", "<cmd>CccHighlighterToggle<cr>", desc = "Toggle Highlighter" },
+      { "<leader>zCp", "<cmd>CccPick<cr>", desc = "Pick" },
+      { "<leader>zCc", "<cmd>CccConvert<cr>", desc = "Convert" },
+      { "<leader>zCh", "<cmd>CccHighlighterToggle<cr>", desc = "Toggle Highlighter" },
     },
   },
 }
