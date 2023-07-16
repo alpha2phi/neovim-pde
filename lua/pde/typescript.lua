@@ -23,7 +23,10 @@ return {
       require("base.lsp.utils").on_attach(function(client, bufnr)
         if client.name == "tsserver" then
           vim.keymap.set("n", "<leader>lo", "<cmd>TSToolsOrganizeImports<cr>", { buffer = bufnr, desc = "Organize Imports" })
-          vim.keymap.set("n", "<leader>lF", "<cmd>TSToolsFixAll<cr>", { desc = "Fix All", buffer = bufnr })
+          vim.keymap.set("n", "<leader>lO", "<cmd>TSToolsSortImports<cr>", { buffer = bufnr, desc = "Sort Imports" })
+          vim.keymap.set("n", "<leader>lR", "<cmd>TSToolsRemoveUnusedImports<cr>", { buffer = bufnr, desc = "Removed Unused Imports" })
+          vim.keymap.set("n", "<leader>lF", "<cmd>TSToolsFixAll<cr>", { buffer = bufnr, desc = "Fix All" })
+          vim.keymap.set("n", "<leader>lA", "<cmd>TSToolsAddMissingImports<cr>", { buffer = bufnr, desc = "Add Missing Imports" })
         end
       end)
       require("typescript-tools").setup(opts)
@@ -31,7 +34,7 @@ return {
   },
   {
     "neovim/nvim-lspconfig",
-    dependencies = { "jose-elias-alvarez/typescript.nvim" },
+    dependencies = { "pmizio/typescript-tools.nvim" },
     opts = {
       -- make sure mason installs the server
       servers = {
@@ -61,34 +64,10 @@ return {
     },
   },
   {
-    "jose-elias-alvarez/null-ls.nvim",
-    opts = function(_, opts)
-      table.insert(opts.sources, require "typescript.extensions.null-ls.code-actions")
-    end,
-  },
-  {
     "mfussenegger/nvim-dap",
-    dependencies = {
-      -- { "mxsdev/nvim-dap-vscode-js" },
-      -- {
-      --   "microsoft/vscode-js-debug",
-      --   build = "npm install --legacy-peer-deps && npx gulp vsDebugServerBundle && mv dist out",
-      -- },
-    },
     opts = {
       setup = {
         vscode_js_debug = function()
-          -- local function get_js_debug()
-          --   local path = vim.fn.stdpath "data"
-          --   return path .. "/lazy/vscode-js-debug"
-          -- end
-
-          -- require("dap-vscode-js").setup {
-          --   node_path = "node",
-          --   debugger_path = get_js_debug(),
-          --   adapters = { "pwa-node", "pwa-chrome", "pwa-msedge", "node-terminal", "pwa-extensionHost" },
-          -- }
-
           local function get_js_debug()
             local install_path = require("mason-registry").get_package("js-debug-adapter"):get_install_path()
             return install_path .. "/js-debug/src/dapDebugServer.js"
