@@ -88,4 +88,13 @@ return {
       end
     end,
   },
+  {
+    "folke/edgy.nvim",
+    event = "VeryLazy",
+    opts = {
+      bottom = {
+        { ft = "qf", title = "QuickFix" },
+      },
+    },
+  },
 }
