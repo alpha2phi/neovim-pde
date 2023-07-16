@@ -17,7 +17,6 @@ return {
   },
   {
     "pmizio/typescript-tools.nvim",
-    dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
     opts = {},
     config = function(_, opts)
       require("base.lsp.utils").on_attach(function(client, bufnr)
