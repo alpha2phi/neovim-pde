@@ -92,8 +92,8 @@ return {
     "folke/edgy.nvim",
     event = "VeryLazy",
     opts = {
-      bottom = {
-        { ft = "qf", title = "QuickFix" },
+      left = {
+        { ft = "hydra_hint", title = "Hydra", size = { height = 0.5 }, pinned = false },
       },
     },
   },
