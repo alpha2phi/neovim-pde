@@ -162,10 +162,32 @@ local function repl_menu()
   local cmd = require("hydra.keymap-util").cmd
 
   local hint = [[
- ^^ _a_: Insert Cell After ^ _b_: Insert Cell Before ^ _e_: Execute Cell ^ _j_: Next Cell ^ _k_: Previous Cell ^ _m_: Insert Markdown Cell ^ _x_: Delete Cell
- ^^ _s_: Send Motion ^ _l_: Send Line ^ _t_: Send Until Cursor ^ _f_: Send File _R_: Show REPL ^ _C_: Close REPL ^ _S_: Restart REPL ^ _F_: Focus _H_: Hide
- ^^ _c_: Clear ^ _L_: Clear Highlight ^ _<CR>_: ENTER ^ _I_: Interrupt
- ^ ^ ^                                                _q_: Quit 
+ ^
+ _a_: Insert Cell After
+ _b_: Insert Cell Before
+ _e_: Execute Cell
+ _j_: Next Cell
+ _k_: Previous Cell
+ _m_: Insert Markdown Cell
+ _x_: Delete Cell
+ ^
+ _s_: Send Motion
+ _l_: Send Line
+ _t_: Send Until Cursor
+ _f_: Send File
+ ^
+ _R_: Show REPL
+ _C_: Close REPL
+ _S_: Restart REPL
+ _F_: Focus
+ _H_: Hide
+ ^
+ _c_: Clear
+ _L_: Clear Highlight
+ _<CR>_: ENTER
+ _I_: Interrupt
+ ^
+ ^ ^  _q_: Quit 
 ]]
 
   return {

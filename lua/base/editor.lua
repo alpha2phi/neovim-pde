@@ -93,7 +93,7 @@ return {
     event = "VeryLazy",
     opts = {
       left = {
-        { ft = "hydra_hint", title = "Hydra", size = { height = 0.5 }, pinned = false },
+        { ft = "hydra_hint", title = "Hydra", size = { height = 0.5 }, pinned = true },
       },
     },
   },
