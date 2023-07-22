@@ -88,4 +88,13 @@ return {
       end
     end,
   },
+  {
+    "folke/edgy.nvim",
+    event = "VeryLazy",
+    opts = {
+      left = {
+        { ft = "hydra_hint", title = "Hydra", size = { height = 0.5 }, pinned = true },
+      },
+    },
+  },
 }

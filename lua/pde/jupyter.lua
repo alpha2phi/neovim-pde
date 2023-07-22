@@ -198,7 +198,7 @@ local function repl_menu()
       invoke_on_body = true,
       hint = {
         border = "rounded",
-        position = "top-middle",
+        position = "bottom-middle",
       },
     },
     mode = "n",
