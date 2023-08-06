@@ -82,9 +82,9 @@ return {
               local bufnr = event.buf
 
               -- Register keymappings
-              local wk = require "which-key"
-              local keys = { mode = { "n", "v" }, ["<leader>lc"] = { name = "+Crates" } }
-              wk.register(keys)
+              -- local wk = require "which-key"
+              -- local keys = { mode = { "n", "v" }, ["<leader>lc"] = { name = "+Crates" } }
+              -- wk.register(keys)
 
               local map = function(mode, lhs, rhs, desc)
                 if desc then
@@ -92,6 +92,7 @@ return {
                 end
                 vim.keymap.set(mode, lhs, rhs, { silent = true, desc = desc, buffer = bufnr, noremap = true })
               end
+              map("n", "<leader>lc", function() end, "+Crates")
               map("n", "<leader>lcy", "<cmd>lua require'crates'.open_repository()<cr>", "Open Repository")
               map("n", "<leader>lcp", "<cmd>lua require'crates'.show_popup()<cr>", "Show Popup")
               map("n", "<leader>lci", "<cmd>lua require'crates'.show_crate_popup()<cr>", "Show Info")
